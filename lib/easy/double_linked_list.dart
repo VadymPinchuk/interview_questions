@@ -5,19 +5,20 @@ void main() {
   final Node node4 = Node(4);
   final Node node6 = Node(6);
   final DoublyLinkedList list = DoublyLinkedList()
-    ..insertAtPosition(0, Node(5))
-    ..insertAtPosition(0, node4)
-    ..insertAtPosition(0, node3)
-    ..insertAtPosition(0, node2)
-    ..insertAtPosition(0, node1);
+    ..insertAtPosition(1, Node(5))
+    ..insertAtPosition(1, node4)
+    ..insertAtPosition(1, node3)
+    ..insertAtPosition(1, node2)
+    ..insertAtPosition(1, node1);
 
-  list..setHead(node4)
-  ..setTail(node6)
-  ..insertBefore(node6, node3)
-  ..insertAfter(node6, Node(3))
-  ..insertAtPosition(1, Node(3))
-  ..removeNodesWithValue(3)
-  ..remove(node2);
+  list
+    ..setHead(node4)
+    ..setTail(node6)
+    ..insertBefore(node6, node3)
+    ..insertAfter(node6, Node(3))
+    ..insertAtPosition(1, Node(3))
+    ..removeNodesWithValue(3)
+    ..remove(node2);
 
   print(list);
   print(list.containsNodeWithValue(3));
@@ -70,7 +71,7 @@ class DoublyLinkedList {
 
   void insertAtPosition(int position, Node nodeToInsert) {
     // edge case if Head
-    if (position == 0) {
+    if (position == 1) {
       if (head != null) {
         nodeToInsert.next = head;
         nodeToInsert.next?.prev = nodeToInsert;
@@ -82,7 +83,7 @@ class DoublyLinkedList {
     }
 
     Node atPosition = head;
-    for (int i = 1; i <= position; i++) {
+    for (int i = 2; i <= position; i++) {
       if (atPosition == null) {
         throw ArgumentError('message');
       }
@@ -144,13 +145,11 @@ class DoublyLinkedList {
 
 // Do not edit the class below.
 class Node {
-  int value;
+  Node(this.value);
+
+  final int value;
   Node prev;
   Node next;
-
-  Node(int value) {
-    this.value = value;
-  }
 
   @override
   String toString() => 'Node{value: $value}';
