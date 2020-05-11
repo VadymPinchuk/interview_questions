@@ -10,7 +10,7 @@ void insertionSort(List<int> list) {
   while (sorted < list.length - 1) {
     for (int i = sorted; i >= 0; i--) {
       if (list[i] > list[i + 1]) {
-        int tmp = list[i];
+        final int tmp = list[i];
         list[i] = list[i + 1];
         list[i + 1] = tmp;
       } else {
