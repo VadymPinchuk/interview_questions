@@ -29,29 +29,17 @@ class DoublyLinkedList {
   Node tail;
 
   void setHead(Node node) {
-    node.next?.prev = node.prev;
-    node.prev?.next = node.next;
-    if (head != null) {
-      node.next = head;
-      head.prev = node;
-    }
-    node.prev = null;
+    insertBefore(head, node);
     head = node;
   }
 
   void setTail(Node node) {
-    node.next?.prev = node.prev;
-    node.prev?.next = node.next;
-
-    node.prev = tail;
-    node.next = null;
-    tail.next = node;
+    insertAfter(tail, node);
     tail = node;
   }
 
   void insertBefore(Node node, Node nodeToInsert) {
-    nodeToInsert.next?.prev = nodeToInsert.prev;
-    nodeToInsert.prev?.next = nodeToInsert.next;
+    remove(nodeToInsert);
 
     nodeToInsert.next = node;
     nodeToInsert.prev = node.prev;
@@ -60,8 +48,7 @@ class DoublyLinkedList {
   }
 
   void insertAfter(Node node, Node nodeToInsert) {
-    nodeToInsert.next?.prev = nodeToInsert.prev;
-    nodeToInsert.prev?.next = nodeToInsert.next;
+    remove(nodeToInsert);
 
     nodeToInsert.prev = node;
     nodeToInsert.next = node.next;
@@ -73,12 +60,11 @@ class DoublyLinkedList {
     // edge case if Head
     if (position == 1) {
       if (head != null) {
-        nodeToInsert.next = head;
-        nodeToInsert.next?.prev = nodeToInsert;
+        setHead(nodeToInsert);
       } else {
+        head = nodeToInsert;
         tail = nodeToInsert;
       }
-      head = nodeToInsert;
       return;
     }
 
