@@ -1,3 +1,5 @@
+import 'dart:math';
+
 void main() {
   final BST bst = BST(10)
     ..insert(18)
@@ -15,15 +17,10 @@ void main() {
     ..insert(2)
     ..insert(1)
     ..insert(11);
-  bst.printBST(bst.root);
-
-  print('   -------------   ');
-
-//  print(bst.contains(13));
+  BTreePrinter.printNode(bst.root);
 
   bst.delete(18);
-  bst.printBST(bst.root);
-
+  BTreePrinter.printNode(bst.root);
 }
 
 class BST {
@@ -70,16 +67,18 @@ class BST {
   }
 
   void delete(int value) {
-    Node parent = root;
-    Node current = parent.value > value
-        ? parent.left
-        : (parent.value > value ? parent.right : parent);
+    print('delete $value');
+    Node parent;
+    Node current = root.value > value
+        ? root.left
+        : (root.value > value ? root.right : root);
 
     /// find value to be removed and its parent
     while (current != null && current.value != value) {
       parent = current;
       current = parent.value > value ? parent.left : parent.right;
     }
+
     /// Here current will hold proper value
     /// Find value to be placed on current position. - leftmost on the right;
     Node replacement;
@@ -95,12 +94,13 @@ class BST {
       repParent = current;
       replacement = current.left;
     }
+
     /// case when removing last node
     if (replacement == null) {
-      if (parent.value < value) {
-        parent.left = null;
+      if (parent != null && parent.value < value) {
+        parent?.left = null;
       } else {
-        parent.right = null;
+        parent?.right = null;
       }
     } else {
       current.value = replacement.value;
@@ -109,20 +109,7 @@ class BST {
         current.right = replacement.right;
       } else {
         repParent.left = replacement.right;
-        repParent.right = null;
       }
-    }
-  }
-
-  void printBST(Node node) {
-    print('           ${node.value}   \n'
-        '          /  \\    \n'
-        '       L ${node.left?.value ?? '-'}   R ${node.right?.value ?? '-'}');
-    if (node.left != null) {
-      printBST(node.left);
-    }
-    if (node.right != null) {
-      printBST(node.right);
     }
   }
 }
@@ -137,4 +124,95 @@ class Node {
 
   @override
   String toString() => '$value';
+}
+
+class BTreePrinter {
+  static void printNode(Node root) =>
+      printNodeInternal(<Node>[root], 1, BTreePrinter.maxLevel(root));
+
+  static void printNodeInternal(List<Node> nodes, int level, int maxLevel) {
+    if (nodes.isEmpty || BTreePrinter.isAllElementsNull(nodes)) {
+      return;
+    }
+    StringBuffer result = StringBuffer();
+
+    final int floor = maxLevel - level;
+    final int edgeLines = pow(2, max(floor - 1, 0));
+    final int firstSpaces = pow(2, floor) - 1;
+    final int betweenSpaces = pow(2, floor + 1) - 1;
+
+    BTreePrinter.printWhitespaces(firstSpaces, result);
+
+    List<Node> newNodes = <Node>[];
+    for (Node node in nodes) {
+      if (node != null) {
+        result.write(node.value);
+        newNodes.add(node.left);
+        newNodes.add(node.right);
+      } else {
+        newNodes.add(null);
+        newNodes.add(null);
+        result.write(' ');
+      }
+
+      BTreePrinter.printWhitespaces(betweenSpaces, result);
+    }
+    print(result.toString());
+    result.clear();
+
+    for (int i = 1; i <= edgeLines; i++) {
+      for (int j = 0; j < nodes.length; j++) {
+        BTreePrinter.printWhitespaces(firstSpaces - i, result);
+        if (nodes[j] == null) {
+          BTreePrinter.printWhitespaces(edgeLines + edgeLines + i + 1, result);
+          continue;
+        }
+
+        if (nodes[j].left != null) {
+          result.write('/');
+        } else {
+          BTreePrinter.printWhitespaces(1, result);
+        }
+
+        BTreePrinter.printWhitespaces(i + i - 1, result);
+
+        if (nodes[j].right != null) {
+          result.write('\\');
+        } else {
+          BTreePrinter.printWhitespaces(1, result);
+        }
+
+        BTreePrinter.printWhitespaces(edgeLines + edgeLines - i, result);
+      }
+      print(result.toString());
+      result.clear();
+    }
+
+    printNodeInternal(newNodes, level + 1, maxLevel);
+  }
+
+  static void printWhitespaces(int count, StringBuffer result) {
+    for (int i = 0; i < count; i++) {
+      result.write(' ');
+    }
+  }
+
+  static int maxLevel(Node node) {
+    if (node == null) {
+      return 0;
+    }
+
+    return max(BTreePrinter.maxLevel(node.left),
+            BTreePrinter.maxLevel(node.right)) +
+        1;
+  }
+
+  static bool isAllElementsNull(List<Node> list) {
+    for (final Node node in list) {
+      if (node != null) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
