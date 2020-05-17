@@ -19,7 +19,7 @@ void main() {
     ..insert(11);
   BTreePrinter.printNode(bst.root);
 
-  bst.delete(18);
+  bst.delete(15);
   BTreePrinter.printNode(bst.root);
 }
 
@@ -107,8 +107,10 @@ class BST {
       if (current.right == null) {
         current.left = replacement.left;
         current.right = replacement.right;
-      } else {
+      } else if (current != repParent){
         repParent.left = replacement.right;
+      } else {
+        current.right = replacement.right;
       }
     }
   }
