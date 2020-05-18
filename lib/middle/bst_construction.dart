@@ -2,24 +2,25 @@ import 'dart:math';
 
 void main() {
   final BST bst = BST(10)
-    ..insert(18)
-    ..insert(15)
-    ..insert(13)
-    ..insert(11)
-    ..insert(14)
-    ..insert(16)
-    ..insert(17)
-    ..insert(5)
-    ..insert(5)
-    ..insert(8)
-    ..insert(9)
-    ..insert(6)
-    ..insert(2)
-    ..insert(1)
-    ..insert(11);
+      .insert(18)
+      .insert(15)
+      .insert(13)
+      .insert(11)
+      .insert(14)
+      .insert(16)
+      .insert(17)
+      .insert(5)
+      .insert(5)
+      .insert(8)
+      .insert(9)
+      .insert(6)
+      .insert(2)
+      .insert(1)
+      .insert(11);
+
   BTreePrinter.printNode(bst.root);
 
-  bst.delete(15);
+  bst.remove(10);
   BTreePrinter.printNode(bst.root);
 }
 
@@ -27,96 +28,96 @@ class BST {
   BST(int value) : root = Node(value);
   Node root;
 
-  void insert(int value) {
-    if (value >= root.value) {
-      _insertValueInBranch(root.right, root, value);
-    } else {
-      _insertValueInBranch(root.left, root, value);
+  BST insert(int value) {
+    Node current = root;
+    while (true) {
+      if (value < current.value) {
+        if (current.left == null) {
+          current.left = Node(value);
+          break;
+        } else {
+          current = current.left;
+        }
+      } else {
+        if (current.right == null) {
+          current.right = Node(value);
+          break;
+        } else {
+          current = current.right;
+        }
+      }
     }
-  }
-
-  void _insertValueInBranch(Node toCheck, Node parent, int value) {
-    while (toCheck != null) {
-      parent = toCheck;
-      toCheck = value >= toCheck.value ? toCheck.right : toCheck.left;
-    }
-    toCheck = Node(value);
-    if (value >= parent.value) {
-      parent.right = toCheck;
-    } else {
-      parent.left = toCheck;
-    }
+    return this;
   }
 
   bool contains(int value) {
-    Node node = root;
-    while (node != null) {
-      if (node.value == value) {
+    Node current = root;
+    while (current != null) {
+      if (current.value == value) {
         return true;
-      }
-      if (value >= node.value) {
-        node = node.right;
-        continue;
-      }
-      if (value < node.value) {
-        node = node.left;
-        continue;
+      } else if (value < current.value) {
+        current = current.left;
+      } else {
+        current = current.right;
       }
     }
     return false;
   }
 
-  void delete(int value) {
-    print('delete $value');
-    Node parent;
-    Node current = root.value > value
-        ? root.left
-        : (root.value > value ? root.right : root);
-
-    /// find value to be removed and its parent
-    while (current != null && current.value != value) {
-      parent = current;
-      current = parent.value > value ? parent.left : parent.right;
-    }
-
-    /// Here current will hold proper value
-    /// Find value to be placed on current position. - leftmost on the right;
-    Node replacement;
-    Node repParent;
-    if (current.right != null) {
-      repParent = current;
-      replacement = current.right;
-      while (replacement != null && replacement.left != null) {
-        repParent = replacement;
-        replacement = replacement.left;
-      }
-    } else {
-      repParent = current;
-      replacement = current.left;
-    }
-
-    /// case when removing last node
-    if (replacement == null) {
-      if (parent != null && parent.value < value) {
-        parent?.left = null;
+  BST remove(int value, {Node parent, Node cur}) {
+    Node current = cur ?? root;
+    while (current != null) {
+      /// searching for node to be removed
+      if (value < current.value) {
+        parent = current;
+        current = current.left;
+      } else if (value > current.value) {
+        parent = current;
+        current = current.right;
       } else {
-        parent?.right = null;
-      }
-    } else {
-      current.value = replacement.value;
-      if (current.right == null) {
-        current.left = replacement.left;
-        current.right = replacement.right;
-      } else if (current != repParent){
-        repParent.left = replacement.right;
-      } else {
-        current.right = replacement.right;
+        /// when node to be removed found
+        /// Case when this is not last node
+        if (current.left != null && current.right != null) {
+          current.value = findReplacement(current.right);
+          remove(current.value, parent: current, cur: current.right);
+        } else if (parent == null) {
+          /// Case when it is root node with left or right child or none
+          if (current.left != null) {
+            current.value = current.left.value;
+            current.right = current.left.right;
+            current.left = current.left.left;
+          } else if (current.right != null) {
+            current.value = current.right.value;
+            current.left = current.right.left;
+            current.right = current.right.right;
+          } else {
+            /// if node to delete is root. The only one exists - edge case
+          }
+        } else if (parent.left == current) {
+          /// Case when current is parent left and current have only one child
+          parent.left = current.left ?? current.right;
+        } else if (parent.right == current) {
+          /// Case when current is parent right and current have only one child
+          parent.right = current.left ?? current.right;
+        }
+        break;
       }
     }
+    return this;
+  }
+
+  /// Find the leftmost on the right
+  int findReplacement(Node nodeToReplace) {
+    Node current = nodeToReplace;
+    while (current.left != null) {
+      current = current.left;
+    }
+    return current.value;
   }
 }
 
-// Do not edit the class below.
+/// NODE class
+/// Do not edit the class below.
 class Node {
   Node(this.value);
 
@@ -128,6 +129,7 @@ class Node {
   String toString() => '$value';
 }
 
+/// Printer class
 class BTreePrinter {
   static void printNode(Node root) =>
       printNodeInternal(<Node>[root], 1, BTreePrinter.maxLevel(root));
