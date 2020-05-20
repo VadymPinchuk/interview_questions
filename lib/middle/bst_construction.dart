@@ -22,6 +22,20 @@ void main() {
 
   bst.remove(10);
   BTreePrinter.printNode(bst.root);
+
+  print(validateBST(bst.root, double.negativeInfinity, double.infinity));
+
+}
+
+bool validateBST(Node branch, double min, double max) {
+  if (branch.value < min || branch.value >= max) {
+    return false;
+  }
+  final bool left = branch.left == null || validateBST(branch.left, min, branch.value.toDouble());
+  final bool right = branch.right == null || validateBST(branch.right, branch.value.toDouble(), max);
+
+  return left && right;
+
 }
 
 class BST {
