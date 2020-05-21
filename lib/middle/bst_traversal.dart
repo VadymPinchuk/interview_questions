@@ -21,6 +21,7 @@ void main() {
   print('inOrderTraverse ${inOrderTraverse(bst.root, <int>[])}');
   print('preOrderTraverse ${preOrderTraverse(bst.root, <int>[])}');
   print('postOrderTraverse ${postOrderTraverse(bst.root, <int>[])}');
+  print('sumTraverse ${sumTraverse(bst.root, 0, <int>[])}');
 }
 
 /// traverse in order: left - value - right
@@ -51,4 +52,18 @@ List<int> postOrderTraverse(Node tree, List<int> result) {
     result.add(tree.value);
   }
   return result;
+}
+
+/// traverse in order: value - left - right
+List<int> sumTraverse(Node tree, int sum, List<int> results) {
+  if (tree.left != null) {
+    sumTraverse(tree.left, sum + tree.value, results);
+  }
+  if (tree.right != null) {
+    sumTraverse(tree.right, sum + tree.value, results);
+  }
+  if (tree.left == null && tree.right == null) {
+    results.add(sum + tree.value);
+  }
+  return results;
 }
