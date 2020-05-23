@@ -18,6 +18,7 @@ void main() {
 
   BTreePrinter.printNode(bst.root);
 
+  print('inorderMorrisTraversal ${inorderMorrisTraversal(bst.root, <int>[])}');
   print('inOrderTraverse ${inOrderTraverse(bst.root, <int>[])}');
   print('preOrderTraverse ${preOrderTraverse(bst.root, <int>[])}');
   print('postOrderTraverse ${postOrderTraverse(bst.root, <int>[])}');
@@ -32,6 +33,43 @@ List<int> inOrderTraverse(Node tree, List<int> result) {
     inOrderTraverse(tree.right, result);
   }
   return result;
+}
+
+/// https://www.geeksforgeeks.org/inorder-tree-traversal-without-recursion-and-without-stack/
+List<int> inorderMorrisTraversal(Node root, List<int> result) {
+  Node current, pre;
+
+  if (root == null) {
+    return result;
+  }
+
+  current = root;
+  while (current != null) {
+    if (current.left == null) {
+      result.add(current.value);
+      current = current.right;
+    } else {
+      /// Find the inorder predecessor of current
+      pre = current.left;
+      while (pre.right != null && pre.right != current) {
+        pre = pre.right;
+      }
+
+      /// Make current as right child of its inorder predecessor
+      if (pre.right == null) {
+        pre.right = current;
+        current = current.left;
+      } else {
+        /// Revert the changes made in the 'if' part to restore the
+        /// original tree i.e., fix the right child of predecessor
+
+        pre.right = null;
+        result.add(current.value);
+        current = current.right;
+      } // End of if condition pre->right == NULL
+    } // End of if condition current->left == NULL
+  }
+  return result;// End of while
 }
 
 /// traverse in order: value - left - right
