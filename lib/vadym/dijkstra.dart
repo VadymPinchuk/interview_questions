@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dart_numerics/dart_numerics.dart';
 
 const int SIZE = 9;
@@ -18,67 +20,75 @@ void main() {
   dijkstra(graph, 0);
 }
 
-int minDistance(List<int> dist, List<bool> sptSet) {
-  /// Initialize min value
-  int min = MAX;
-  int minIndex = -1;
-
-  for (int v = 0; v < SIZE; v++)
-    if (sptSet[v] == false && dist[v] <= min) {
-      min = dist[v];
-      minIndex = v;
-    }
-
-  return minIndex;
-}
-
-void printSolution(List<int> dist) {
-  print('Vertex \t\t Distance from Source');
-  for (int i = 0; i < SIZE; i++) {
-    print('$i \t\t ${dist[i]}');
-  }
-}
-
 void dijkstra(List<List<int>> graph, int src) {
   /// The output array. dist[i] will hold
-  List<int> dist = List<int>(SIZE);
+  final List<int> distances = List<int>(SIZE);
 
   /// the shortest distance from src to i
 
   /// sptSet[i] will true if vertex i is included in shortest
   /// path tree or shortest distance from src to i is finalized
-  List<bool> sptSet = List<bool>(SIZE);
+  final List<bool> visited = List<bool>(SIZE);
 
   /// Initialize all distances as INFINITE and stpSet[] as false
   for (int i = 0; i < SIZE; i++) {
-    dist[i] = MAX;
-    sptSet[i] = false;
+    distances[i] = MAX;
+    visited[i] = false;
   }
 
   /// Distance of source vertex from itself is always 0
-  dist[src] = 0;
+  distances[src] = 0;
 
   /// Find shortest path for all vertices
   for (int count = 0; count < SIZE - 1; count++) {
     /// Pick the minimum distance vertex from the set of vertices
     /// not yet processed. u is always equal to src in first
     /// iteration.
-    int u = minDistance(dist, sptSet);
+    final int nextVertex = minDistance(distances, visited);
 
     /// Mark the picked vertex as processed
-    sptSet[u] = true;
+    visited[nextVertex] = true;
 
     /// Update dist value of the adjacent vertices of the
     /// picked vertex.
-    for (int v = 0; v < SIZE; v++)
+    for (int vertex = 0; vertex < SIZE; vertex++) {
+      /// Update dist[v] only if is not in visited
+      if (visited[vertex]) continue;
 
-      /// Update dist[v] only if is not in sptSet, there is an
-      /// edge from u to v, and total weight of path from src to
-      /// v through u is smaller than current value of dist[v]
-      if (!sptSet[v] && graph[u][v] != 0 && dist[u] != MAX && dist[u] + graph[u][v] < dist[v])
-        dist[v] = dist[u] + graph[u][v];
+      final int edgeWeight = graph[nextVertex][vertex];
+
+      /// There is an edge from nextVertex to vertex
+      if (edgeWeight == 0) continue;
+
+      final int distToNext = distances[nextVertex];
+      if (distToNext == MAX) continue;
+
+      /// And total weight of path from src to v through u is smaller than current value of dist[v]
+      distances[vertex] = min(distToNext + edgeWeight, distances[vertex]);
+    }
   }
 
   /// print the constructed distance array
-  printSolution(dist);
+  printSolution(distances);
+}
+
+int minDistance(List<int> distances, List<bool> visited) {
+  /// Initialize min value
+  int min = MAX;
+  int minIndex = -1;
+
+  for (int v = 0; v < SIZE; v++)
+    if (visited[v] == false && distances[v] <= min) {
+      min = distances[v];
+      minIndex = v;
+    }
+
+  return minIndex;
+}
+
+void printSolution(List<int> distances) {
+  print('Vertex \t\t Distance from Source');
+  for (int i = 0; i < SIZE; i++) {
+    print('$i \t\t ${distances[i]}');
+  }
 }
