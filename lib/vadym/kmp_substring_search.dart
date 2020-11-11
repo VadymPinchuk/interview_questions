@@ -46,7 +46,7 @@ int searchSubstring(String input, String pattern) {
   while (i < input.length) {
     //    print('${input[i]} ${pattern[j]} $i $j ${positions[j]}');
     // If it is last char in pattern - return start position of this pattern
-    if (j == patMaxIndex) {
+    if (j == pattern.length) {
       print(input.substring(i - j, i + 1));
       print('[${i - j}, $i]');
       return i - j;
