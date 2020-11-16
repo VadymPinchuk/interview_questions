@@ -9,6 +9,7 @@ environment:
 dependencies:
   path: ^1.7.0
   dart_numerics: ^0.0.5
+  useful_extension: ^1.0.2+4
 
 dev_dependencies:
   pedantic: ^1.9.2
