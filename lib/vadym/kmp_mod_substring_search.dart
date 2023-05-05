@@ -41,13 +41,9 @@ bool searchSubstring(List<String> input, String pattern) {
     }
   }
 
-  // print(patternTable);
-  // int counter = 0;
   int patIdx = 0; // for iteration over pattern;
   for (final String line in input) {
     int lineIdx = 0;
-    // counter++;
-    // print('iteration $counter');
     while (lineIdx < line.length) {
       /// If it is last char in pattern - return start position of this pattern
       if (patIdx == pattern.length) {
@@ -64,7 +60,7 @@ bool searchSubstring(List<String> input, String pattern) {
         patIdx = patternTable[patIdx - 1];
       } else {
         /// If value is zero - move to next char in line
-        lineIdx += 1;
+        lineIdx++;
       }
     }
   }
