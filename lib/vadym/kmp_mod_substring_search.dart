@@ -4,7 +4,7 @@ void main() {
   /// merge not allowed
   print(
     searchSubstring(
-      <String>['abc', 'abcaaaabcabc', 'abc', 'abcaaabcd', 'abc', 'abbacdaaaa', 'aaaaa'],
+      <String>['abc', 'aaaaa', '1', '232', 'abcaaaabcabc', 'abc', 'abcaaabcd', 'abc', 'abbacdaaaa', 'aaaaa'],
       'abcabcabc',
     ),
   ); // 6
@@ -16,11 +16,8 @@ bool searchSubstring(List<String> input, String pattern) {
   if (input.isEmpty || pattern.isEmpty) {
     return false;
   }
-  final List<int> patternTable = List<int>(pattern.length);
-  /// first init (Dart style. In Java it would be array of zeros by default)
-  for(int i = 0; i < pattern.length; i++) {
-    patternTable[i] = 0;
-  }
+  /// table to build a pattern
+  final List<int> patternTable = List<int>.filled(pattern.length, 0);
 
   int j = 0;
   int i = 1;
@@ -45,14 +42,13 @@ bool searchSubstring(List<String> input, String pattern) {
   }
 
   // print(patternTable);
-  int counter = 0;
+  // int counter = 0;
   int patIdx = 0; // for iteration over pattern;
   for (final String line in input) {
     int lineIdx = 0;
     // counter++;
     // print('iteration $counter');
     while (lineIdx < line.length) {
-      //    print('${line[i]} ${pattern[j]} $i $j ${positions[j]}');
       /// If it is last char in pattern - return start position of this pattern
       if (patIdx == pattern.length) {
         return true;
