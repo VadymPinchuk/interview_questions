@@ -4,8 +4,8 @@ void main() {
   /// merge not allowed
   print(
     searchSubstring(
-      <String>['abc', 'aaaaaabcd', 'aaaaaabcd', 'abbacdaaaa', 'aaaaa'],
-      'abcdabbacd',
+      <String>['abc', 'abcaaaabcabc', 'abc', 'abcaaabcd', 'abc', 'abbacdaaaa', 'aaaaa'],
+      'abcabcabc',
     ),
   ); // 6
 }
